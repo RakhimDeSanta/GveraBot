@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gvera_bot
+    username: postgres
+    password: 5825
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
