@@ -1,6 +1,6 @@
 package com.gvera.gverabot.controller;
 
-import com.gvera.gverabot.UserState;
+import com.gvera.gverabot.entity.UserState;
 import com.gvera.gverabot.controller.constants.AppConstants;
 import com.gvera.gverabot.entity.Item;
 import com.gvera.gverabot.entity.Store;
@@ -17,11 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -205,13 +201,13 @@ public class StoreController {
     }
 
     public void update(Message message, User currentUser, SendMessage response) {
-        storeService.update(message, currentUser);
+        storeService.update(message, currentUser, response);
         response.setText("Successfully updated!");
     }
 
     public void addItemName(Message message, User currentUser, SendMessage response) {
         storeService.addItemName(message, currentUser, response);
-        response.setText("Now enter the price for "+message.getText()+": ");
+        response.setText("Now enter the price for "+message.getText()+": \n\ni.g: 25000 = 25000 sum");
     }
 
     public void addItemPrice(Message message, User currentUser, SendMessage response) {
@@ -222,21 +218,23 @@ public class StoreController {
     public void addItemQuantity(Message message, User currentUser, SendMessage response) {
         Item item = storeService.addItemQuantity(message, currentUser, response);
 
-        StringBuilder result = new StringBuilder();
-        result.append("Please check if everything is right. \n\n")
-                        .append("Item's name: ")
-                        .append(item.getName())
-                        .append("\n")
-                        .append("Item's price: ")
-                        .append(item.getPrice())
-                        .append("\n")
-                        .append("Item's quantity: ")
-                        .append(item.getQuantity())
-                        .append("\n")
-                        .append("Are you sure ?");
+        if (Objects.nonNull(item)) {
+            StringBuilder result = new StringBuilder();
+            result.append("Please check if everything is right. \n\n")
+                    .append("Item's name: ")
+                    .append(item.getName())
+                    .append("\n")
+                    .append("Item's price: ")
+                    .append(item.getPrice())
+                    .append("\n")
+                    .append("Item's quantity: ")
+                    .append(item.getQuantity())
+                    .append("\n")
+                    .append("Are you sure ?");
 
-        response.setText(result.toString());
-        storeService.yesOrNoKeyboardMarkup(response);
+            response.setText(result.toString());
+            storeService.yesOrNoKeyboardMarkup(response);
+        }
     }
 
     public void confirmAddItem(Message message, User currentUser, SendMessage response) {

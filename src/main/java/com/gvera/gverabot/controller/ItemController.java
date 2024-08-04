@@ -1,6 +1,5 @@
 package com.gvera.gverabot.controller;
 
-import com.gvera.gverabot.UserState;
 import com.gvera.gverabot.entity.Item;
 import com.gvera.gverabot.entity.Store;
 import com.gvera.gverabot.entity.User;
@@ -18,7 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor

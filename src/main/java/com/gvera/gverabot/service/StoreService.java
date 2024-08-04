@@ -1,6 +1,6 @@
 package com.gvera.gverabot.service;
 
-import com.gvera.gverabot.UserState;
+import com.gvera.gverabot.entity.UserState;
 import com.gvera.gverabot.controller.constants.AppConstants;
 import com.gvera.gverabot.entity.Item;
 import com.gvera.gverabot.entity.ItemAudit;
@@ -63,11 +63,18 @@ public class StoreService {
         result.append("Here is the inventory of ")
                 .append(store.getName())
                 .append(":\n\n");
-        for (var item : store.getItems()) {
+
+        List<Item> items = store.getItems();
+        for (int i = 0; i < items.size(); i++) {
+            result.append(i+1)
+                    .append(". ");
+            Item item = items.get(i);
             result.append(item.getName())
                     .append(", ")
+                    .append("amount: ")
                     .append(item.getQuantity())
                     .append(", ")
+                    .append("price: ")
                     .append(item.getPrice());
 
             if (Objects.nonNull(item.getDiscount())) {
@@ -77,6 +84,7 @@ public class StoreService {
                         .append(")");
             }
             result.append(", ")
+                    .append("added on ")
                     .append(item.getDate())
                     .append("\n\n");
         }
@@ -155,6 +163,10 @@ public class StoreService {
     }
 
     public void addItemName(Message message, User currentUser, SendMessage response) {
+        if (message.getText().startsWith("/")) {
+            response.setText("Name cannot start with /\nEnter another one");
+            return;
+        }
         Item item = new Item();
         item.setName(message.getText());
         tempItems.put(currentUser.getId(), item);
@@ -175,7 +187,14 @@ public class StoreService {
 
     public Item addItemQuantity(Message message, User currentUser, SendMessage response) {
         Item item = tempItems.get(currentUser.getId());
-        item.setQuantity(Integer.valueOf(message.getText()));
+        int quantity;
+        try {
+            quantity = Integer.parseInt(message.getText());
+        } catch (NumberFormatException e) {
+            response.setText("Enter a number, not a text! \n\ni.g: 5");
+            return null;
+        }
+        item.setQuantity(quantity);
         tempItems.put(currentUser.getId(), item);
 
         currentUser.setState(UserState.ADD_ITEM_CONFIRM);
@@ -407,13 +426,20 @@ public class StoreService {
         userRepository.save(currentUser);
     }
 
-    public void update(Message message, User currentUser) {
+    public void update(Message message, User currentUser, SendMessage response) {
         UserState state = currentUser.getState();
         Item item = tempItems.get(currentUser.getId());
 
         String text = message.getText();
         if (state.equals(UserState.UPDATE_ITEM_FIELD_PRICE)) {
-            item.setPrice(Double.valueOf(text));
+            double price;
+            try {
+                price = Double.parseDouble(text);
+            } catch (NumberFormatException e) {
+                response.setText("The price should not be a text!");
+                return;
+            }
+            item.setPrice(price);
             checkAndSave(message, item);
         } else if (state.equals(UserState.UPDATE_ITEM_FIELD_NAME)) {
             item.setName(text);

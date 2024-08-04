@@ -1,0 +1,13 @@
+server:
+  port: 8081
+spring:
+
+  datasource:
+    url: jdbc:postgresql://gverabot-db-gym-fitness-app.c.aivencloud.com:13351/defaultdb?ssl=require
+    username: avnadmin
+    password: AVNS_JhfKdrRIuEroWoola0V
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true

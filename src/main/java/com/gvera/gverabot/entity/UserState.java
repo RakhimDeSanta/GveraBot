@@ -1,4 +1,4 @@
-package com.gvera.gverabot;
+package com.gvera.gverabot.entity;
 
 public enum UserState {
     REGISTER,

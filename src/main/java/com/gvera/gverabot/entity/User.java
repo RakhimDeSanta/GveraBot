@@ -1,6 +1,5 @@
 package com.gvera.gverabot.entity;
 
-import com.gvera.gverabot.UserState;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

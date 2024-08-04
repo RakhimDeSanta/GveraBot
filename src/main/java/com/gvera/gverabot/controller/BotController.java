@@ -1,7 +1,7 @@
 package com.gvera.gverabot.controller;
 
 import com.gvera.gverabot.TelegramBot;
-import com.gvera.gverabot.UserState;
+import com.gvera.gverabot.entity.UserState;
 import com.gvera.gverabot.entity.User;
 import com.gvera.gverabot.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -44,17 +44,20 @@ public class BotController {
 
         User currentUser;
 
-        if (message.getText().equals("/start")) {
+        if (optUser.isEmpty()) {
             ReplyKeyboardRemove removeKeyboard = new ReplyKeyboardRemove();
             removeKeyboard.setRemoveKeyboard(true);
             response.setReplyMarkup(removeKeyboard);
-
+        }
+        if (message.getText().equals("/reset"))
             if (optUser.isPresent()) {
                 currentUser = optUser.get();
-                storeController.display(message, currentUser, response);
+                currentUser.setState(UserState.STORES);
+                userService.save(currentUser);
+                response.setText("Type /start");
+                sendMessage(message, response);
+                return;
             }
-        }
-
         if (optUser.isEmpty()) {
             response.setText("Hello!\n {brief explanation}\n Enter the name of your store:");
             userService.save(new User(chatId, UserState.REGISTER_STORE));
